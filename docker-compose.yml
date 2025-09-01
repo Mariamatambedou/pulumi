@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+    traefik:
+        image: traefik:v3.1
+        command:
+            - --providers.docker.swarmMode=true
+            - --providers.docker.exposedbydefault=false
+            - --entrypoints.web.address=:80
+            - --entrypoints.websecure.address=:443
+            - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
+            - --certificatesresolvers.le.acme.storage=/acme/acme.json
+            - --certificatesresolvers.le.acme.httpchallenge=true
+            - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+            - "/opt/traefik:/acme"
+        deploy:
+            placement:
+                constraints: ["node.role == manager"]
+        environment:
+            - ACME_EMAIL=${ACME_EMAIL}
+    
+    app:
+        image: your/app:latest
+        deploy:
+            labels:
+                - traefik.enable=true
+                - traefik.http.routers.app.rule=Host(`${YOUR_DOMAIN}`)
+                - traefik.http.routers.app.entrypoints=websecure
+                - traefik.http.routers.app.tls.certresolver=le

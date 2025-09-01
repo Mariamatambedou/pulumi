@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+    nginx:
+        image: nginx:stable
+        volumes:
+            - /opt/certbot/etc/live/example.local/fullchain.pem:/etc/nginx/certs/fullchain.pem:ro
+            - /opt/certbot/etc/live/example.local/privkey.pem:/etc/nginx/certs/privkey.pem:ro
+            - ./nginx.conf:/etc/nginx/nginx.conf:ro
+        ports:
+            - "80:80"
+            - "443:443"
+        deploy: {}

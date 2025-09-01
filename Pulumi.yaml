@@ -1,0 +1,3 @@
+name: odoo-swarm
+runtime: python
+description: "Déploiement d'une pile Odoo avec Docker Swarm via Pulumi"
