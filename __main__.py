@@ -7,7 +7,7 @@ from pulumi_command import remote
 cfg = Config()
 host = cfg.require("host")
 ssh_user = cfg.get("sshUser") or "ubuntu"
-ssh_private_key = cfg.require("sshPrivateKey")
+ssh_private_key = Path.home().joinpath(".ssh/id_rsa_pulumi_nopass").read_text()
 domain = cfg.require("domain")
 email = cfg.require("email")
 cert_mode = (cfg.get("certMode") or "traefik").lower()
